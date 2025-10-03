@@ -129,7 +129,6 @@ h1 {
 }
 
 /* Estilos para o Botão Voltar */
-
 .back-button {
   padding: 10px 20px;
   font-size: 1rem;
@@ -173,6 +172,7 @@ h1 {
   font-size: 1.1rem;
   color: var(--text-secondary);
   padding: 15px;
+  width: 100%;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   border-left: 5px solid var(--success-color);
@@ -194,7 +194,7 @@ h1 {
   box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Sombra para dar um efeito de elevação */
 }
 
-.header-title span {
+#content-title {
   background: var(--primary-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -242,7 +242,7 @@ h1 {
   }
 
   #learning-app {
-    padding: 10px;
+    padding: 0px;
     margin: 10px;
   }
 
@@ -254,9 +254,11 @@ h1 {
     font-size: 1rem;
     padding: 12px 20px;
   }
-
+  #content-display h3 {
+    margin-top: 65px;
+  }
   .content-box {
-    padding: 20px;
+    padding: 0;
   }
 
   .content-box h2 {
@@ -265,6 +267,11 @@ h1 {
 
   #lesson-text {
     font-size: 1rem;
+  }
+  .back-button {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    height: 30%;
   }
 }
     </style>
@@ -474,9 +481,10 @@ async function showContent(level, chapterIndex) {
     document.getElementById('header-title-container').classList.remove('hidden');
 
     const emojiRegex = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
-    const formattedLevel = level.replace(emojiRegex, '<span class="emoji">$&</span>');
+	const formatedChapter = chapter.title.replace(emojiRegex, '<span class="emoji">$&</span>');
+
     // Exibe o título do capítulo
-document.getElementById('content-title').innerHTML = `${chapter.title} <span class="emoji">🗣️</span>`;
+document.getElementById('content-title').innerHTML = `${formatedChapter} <span class="emoji">🗣️</span>`;
 
     const audioPlayer = document.getElementById('audio-player');
     const lessonTextElement = document.getElementById('lesson-text');
