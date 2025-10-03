@@ -166,17 +166,29 @@ h1 {
   font-weight: 700;
 }
 
+
+
 #lesson-text {
-  white-space: pre-wrap;
-  line-height: 1.8;
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  padding: 15px;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  border-left: 5px solid var(--success-color);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    white-space: pre-wrap;
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    padding: 15px 20px; /* Adicionamos o padding de volta para o texto não colar nas bordas */
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    /* --- MÁGICA ACONTECE AQUI --- */
+
+    /* 1. Puxa o elemento 20px para a esquerda e 20px para a direita */
+    margin-left: -20px;
+    margin-right: -20px;
+
+    /* 2. Aumenta a largura para compensar o espaço ganho com as margens */
+    width: calc(100% + 40px);
+
+    /* 3. Remove o arredondamento para que os cantos não fiquem estranhos */
+    border-radius: 0;
+  	border-left: 5px solid var(--success-color);
 }
 
 .header-title {
