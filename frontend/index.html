@@ -609,7 +609,7 @@ document.getElementById('content-title').innerHTML = `${formatedChapter} <span c
                 // 1. Lógica para PARAR o áudio
                 if (stopAtTime && currentTime >= stopAtTime) {
                     audioPlayer.pause();
-                    stopAtTime = null; // Reseta a variável para não interferir na reprodução normal
+                    stopAtTime = null;
                 }
 
                 // 2. Lógica para DESTACAR a linha
@@ -620,11 +620,17 @@ document.getElementById('content-title').innerHTML = `${formatedChapter} <span c
                         break;
                     }
                 }
-                
+
                 const allBlocks = lessonTextElement.querySelectorAll('.subtitle-block');
                 allBlocks.forEach((block, index) => {
                     if (index === activeBlockIndex) {
                         block.classList.add('active-line');
+
+                        // 3. SCROLL AUTOMÁTICO - Rola a linha ativa para o topo da tela
+                        block.scrollIntoView({
+                            behavior: 'auto',  // Animação suave
+                            block: 'center'      // Centraliza na tela (opções: 'start', 'center', 'end', 'nearest')
+                        });
                     } else {
                         block.classList.remove('active-line');
                     }
