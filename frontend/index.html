@@ -32,6 +32,12 @@ body {
   background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 50%, var(--tertiary-dark) 100%);
   color: var(--text-primary);
   min-height: 100vh;
+  
+  /* BLOQUEIA A SELEÇÃO DE TEXTO */
+  -webkit-user-select: none; /* Para navegadores baseados em WebKit (Chrome, Safari, iOS) */
+  -moz-user-select: none;    /* Para Firefox */
+  -ms-user-select: none;     /* Para Internet Explorer/Edge (legado) */
+  user-select: none;         /* Padrão para todos os navegadores modernos */
 }
 
 body::before {
@@ -169,22 +175,18 @@ h1 {
 
 
 #lesson-text {
-    white-space: pre-wrap;
+    display: block; 
     line-height: 1.8;
     font-size: 1.1rem;
     color: var(--text-secondary);
-    padding: 15px 20px; /* Adicionamos o padding de volta para o texto não colar nas bordas */
+    padding: 15px 20px;
     background: rgba(0, 0, 0, 0.2);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-    /* --- MÁGICA ACONTECE AQUI --- */
-
-    /* 1. Puxa o elemento 20px para a esquerda e 20px para a direita */
     margin-left: -20px;
     margin-right: -20px;
 
     /* 2. Aumenta a largura para compensar o espaço ganho com as margens */
-    width: calc(100% + 40px);
+    width: calc(100% + 0);
 
     /* 3. Remove o arredondamento para que os cantos não fiquem estranhos */
     border-radius: 0;
@@ -247,6 +249,36 @@ h1 {
   display: inline-block; /* Ajuda a evitar problemas de alinhamento vertical */
 }
 
+/* Realce para a Linha de Legenda Ativa */
+.subtitle-block {
+    display: block; /* Mudado de inline-block para block */
+    margin: 5px 0;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+    border-radius: 4px;
+}
+
+.subtitle-block.active-line {
+    background-color: rgba(102, 126, 234, 0.25);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-weight: 600;
+    color: var(--accent-hover);
+    transform: translateX(5px);
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Garante que o texto clicável tenha um estilo diferente de seleção */
+.subtitle-block:hover {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.08); 
+    border-left-color: var(--text-muted);
+    transform: translateX(3px);
+}
+
 /* Media Queries para Responsividade */
 @media only screen and (max-width: 600px) {
   body {
@@ -278,7 +310,7 @@ h1 {
   }
 
   #lesson-text {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
   .back-button {
     padding: 5px 10px;
@@ -576,7 +608,8 @@ document.getElementById('content-title').innerHTML = `${formatedChapter} <span c
             
         } catch (error) {
             console.error('Erro ao processar o arquivo SRT:', error);
-            lessonTextElement.textContent = 'Não foi possível carregar o texto da lição.';
+            lessonTextElement.textContent = 'Não foi possível carregar o texto da lição. Tente novamente.';
+			showChapters();
         }
     } else {
         lessonTextElement.textContent = chapter.text || 'Nenhum texto disponível.';
