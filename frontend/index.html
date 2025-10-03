@@ -360,58 +360,83 @@ h1 {
             Seu navegador não suporta o elemento de áudio.
         </audio>
     </div>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@21.0.0"></script>
 <script>
 // 𒅂𒅂𒅂𒅂𒅂𒅂𒅂𒅂𒅂
-// Bloco | Inicio
+// Bloco | APPWRITE
 // 𒅂𒅂𒅂𒅂𒅂𒅂𒅂𒅂𒅂
-const courseData = {
-    'Stage 1 - Freshman 👶': [
-        { 
-            title: 'Capítulo 1: Saudações Básicas', 
-            audio: 'https://f005.backblazeb2.com/file/Trilha/Chapter-1.-Welcome-%26-Nationalities.mp4', 
-            subtitle: 'https://f005.backblazeb2.com/file/Trilha/Chapter-1.-Welcome-%26-Nationalities.srt' // Nova propriedade
-        },
-        { 
-            title: 'Capítulo 2: Apresentações', 
-            audio: 'audio/iniciante_cap2.mp3', 
-            subtitle: 'texto/iniciante_cap2.srt'
-        },
-        { 
-            title: 'Capítulo 3: Números e Cores', 
-            audio: 'audio/iniciante_cap3.mp3', 
-            subtitle: 'texto/iniciante_cap3.srt'
-        }
-    ],
-    'Stage 2 - Sophomore 🎓': [
-        { 
-            title: 'Capítulo 4: Rotina Diária', 
-            audio: 'audio/intermediario_cap4.mp3', 
-            text: 'Eu levanto às sete horas da manhã, tomo café da manhã e vou para o trabalho. À noite, eu gosto de ler um livro.',
-            subtitle: 'texto/intermediario_cap4.srt'
-        },
-        { 
-            title: 'Capítulo 5: Fazendo Compras', 
-            audio: 'audio/intermediario_cap5.mp3', 
-            subtitle: 'texto/intermediario_cap5.srt'
-        }
-    ],
-    'Stage 3 - Junior 🧠': [
-        { 
-            title: 'Capítulo 6: Discussão de Notícias', 
-            audio: 'audio/avancado_cap6.mp3', 
-            subtitle: 'texto/avancado_cap6.srt'
-        },
-        { 
-            title: 'Capítulo 7: Expressões Idiomáticas', 
-            audio: 'audio/avancado_cap7.mp3', 
-            subtitle: 'texto/avancado_cap7.srt'
-        }
-    ]
-};
+
+// Variáveis de Configuração do Appwrite
+const ENDPOINT = 'https://sfo.cloud.appwrite.io/v1';
+const PROJECT_ID = '68dfeed70038e6089b24';
+const DATABASE_ID = '68e02075001314d07133';
+const COLLECTION_ID = '68e0209300218224e360'; 
+
+// Acesso às classes do Appwrite através da variável global Appwrite
+const Client = Appwrite.Client;
+const Databases = Appwrite.Databases;
+const Query = Appwrite.Query;
+
+const client = new Client();
+client
+    .setEndpoint(ENDPOINT) 
+    .setProject(PROJECT_ID); 
+
+const databases = new Databases(client);
+
+// A variável global que será preenchida pelo Appwrite
+let courseData = {}; 
+
+// --- FUNÇÃO DE CARREGAMENTO DE DADOS (USANDO CLASSES GLOBAIS) ---
+async function loadCourseData() {
+    try {
+        // CORREÇÃO: Usar 'levelTitle' no Query.orderAsc para ordenar pela coluna correta
+        const queries = [
+            Appwrite.Query.orderAsc('levelTitle'), 
+            Appwrite.Query.orderAsc('orderIndex'), 
+        ];
+        
+        // Usa as constantes de ID definidas em outra parte do seu script
+        const response = await databases.listDocuments(DATABASE_ID, COLLECTION_ID, queries);
+        
+        response.documents.forEach(doc => {
+            // CORREÇÃO: Usar doc.levelTitle (nome da coluna)
+            const level = doc.levelTitle; 
+
+            if (!courseData[level]) {
+                courseData[level] = [];
+            }
+            
+            // Mapeamento: As chaves do Appwrite (doc.xxx) já estão consistentes
+            // com as chaves que você forneceu, exceto pela variável 'level'.
+            courseData[level].push({
+                title: doc.chapterTitle, 
+                audio: doc.audioUrl,     
+                subtitle: doc.subtitleUrl 
+            });
+        });
+
+        // Após carregar os dados, exibe os níveis
+        const levelListDiv = document.querySelector('#level-selection .level-list');
+        levelListDiv.innerHTML = ''; // Limpa a lista
+        
+        // Cria um botão para cada nível
+        Object.keys(courseData).forEach(levelName => {
+            const levelButton = document.createElement('button');
+            levelButton.className = 'level-button';
+            levelButton.textContent = levelName;
+            levelButton.onclick = () => showChapters(levelName);
+            levelListDiv.appendChild(levelButton);
+        });
+        
+    } catch (error) {
+        console.error("Erro ao carregar dados do Appwrite:", error);
+        document.getElementById('level-selection').innerHTML = '<h1><span class="emoji">❌</span> Erro ao carregar o curso. Verifique o console e as permissões de leitura do Appwrite.</h1>';
+        Appwrite.showLevels(); 
+    }
+}
 
 let currentLevel = ''; // Variável para rastrear o nível atualmente selecionado
-
-// --- Funções de Navegação (Views) ---
 
 /**
  * Exibe a tela de seleção de Níveis e oculta as outras.
@@ -628,7 +653,8 @@ document.addEventListener('DOMContentLoaded', () => {
         audioPlayer.src = ''; 
     }
     
-    showLevels(); 
+    showLevels();
+    loadCourseData();
 });
 
     </script>
